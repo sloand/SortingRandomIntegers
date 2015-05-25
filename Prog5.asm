@@ -1,4 +1,4 @@
-TITLE: Program 5		(Prog5.asm)
+TITLE: Sorting Random Integers		(Prog5.asm)
 
 ; Author: Dennis Sloan
 ; OSU email address: sloand@onid.oregonstate.edu
@@ -43,16 +43,16 @@ spacer		BYTE	"   ", 0
 .code
 ; Call all procedures
 main PROC
-	call	Randomize					; Set up to get random #'s
-	call	intro						; Intro program
+	call	Randomize				; Set up to get random #'s
+	call	intro					; Intro program
 	push	OFFSET range
-	call	get_range					; Establish random # range
+	call	get_range				; Establish random # range
 	push	OFFSET request
-	call	get_data					; Get # of #'s from user
+	call	get_data				; Get # of #'s from user
 	push	OFFSET array
 	push	request
 	push	range
-	call	fill_array					; Populate array
+	call	fill_array				; Populate array
 	push	OFFSET spacer
 	push	OFFSET unsor_title
 	push	OFFSET array
@@ -60,10 +60,10 @@ main PROC
 	call	display_list				; Print unsorted array
 	push	OFFSET array
 	push	request
-	call	sort_list					; Sort array
+	call	sort_list				; Sort array
 	push	OFFSET array
 	push	OFFSET med_title
-    push	request
+	push	request
 	call	display_median				; Calculate/print median
 	push	OFFSET spacer
 	push	OFFSET sort_title
@@ -82,17 +82,17 @@ main ENDP
 ; Registers changed: edx
 ;******************************************************************
 intro PROC
-	mov		edx, OFFSET title_auth
+	mov	edx, OFFSET title_auth
 	call	WriteString
 	call	Crlf
 	call	Crlf
-	mov		edx, OFFSET intro_1
+	mov	edx, OFFSET intro_1
 	call	WriteString
-    call	Crlf
-	mov		edx, OFFSET intro_2
+    	call	Crlf
+	mov	edx, OFFSET intro_2
 	call	WriteString
 	call	Crlf
-	mov		edx, OFFSET intro_3
+	mov	edx, OFFSET intro_3
 	call	WriteString
 	call	Crlf
 	call	Crlf
@@ -113,10 +113,8 @@ get_range PROC
 	mov		ebp, esp
 	mov		eax, HI			; hi in eax
 	sub		eax, LO			; subtract lo from hi
-	inc		eax				; add 1 
-
-
-	mov		ebx, [ebp+8]	; move range @ into ebx
+	inc		eax			; add 1 
+	mov		ebx, [ebp+8]		; move range @ into ebx
 	mov		[ebx], eax		; move result into range
 	pop		ebp
 	ret		4
@@ -131,29 +129,29 @@ get_range ENDP
 ;******************************************************************
 get_data PROC
 	push	ebp
-	mov		ebp, esp
+	mov	ebp, esp
 	validation:
-		mov		edx, OFFSET prompt
+		mov	edx, OFFSET prompt
 		call	WriteString
 		call	ReadInt
-			cmp		eax, MIN
-			jge		test_2
-			mov		edx, OFFSET error_msg
+			cmp	eax, MIN
+			jge	test_2
+			mov	edx, OFFSET error_msg
 			call	WriteString
 			call	Crlf
 			loop	validation
 			test_2:
-				cmp		eax, MAX
-				jle		end_validation
-				mov		edx, OFFSET error_msg
+				cmp	eax, MAX
+				jle	end_validation
+				mov	edx, OFFSET error_msg
 				call	WriteString
 				call	Crlf
 				loop	validation
 	end_validation:	
-		mov		ebx, [ebp+8]	; move request address to ebx
-		mov		[ebx], eax		; move input to request address
-		pop		ebp
-		ret		4
+		mov	ebx, [ebp+8]	; move request address to ebx
+		mov	[ebx], eax	; move input to request address
+		pop	ebp
+		ret	4
 get_data ENDP
 
 
@@ -168,18 +166,18 @@ get_data ENDP
 ;******************************************************************
 fill_array PROC
 	push	ebp
-	mov		ebp, esp
-	mov		esi, [ebp+16]		; move offest of array to esi
-	mov		ecx, [ebp+12]		; use request as counter
-	cmp		ecx, 0
-	je		end_fill_loop
+	mov	ebp, esp
+	mov	esi, [ebp+16]		; move offest of array to esi
+	mov	ecx, [ebp+12]		; use request as counter
+	cmp	ecx, 0
+	je	end_fill_loop
 	; Generates psuedorandom number, puts array
 	fill_loop:
-		mov		eax, [ebp+8]	; move range into eax for RandomRange
+		mov	eax, [ebp+8]	; move range into eax for RandomRange
 		call	RandomRange
-		add		eax, LO
-		mov		[esi], eax		; move random value from eax to array
-		add		esi, 4			; increase array address for next index
+		add	eax, LO
+		mov	[esi], eax	; move random value from eax to array
+		add	esi, 4		; increase array address for next index
 		loop	fill_loop
 	end_fill_loop:
 		pop ebp
@@ -197,26 +195,26 @@ fill_array ENDP
 ;******************************************************************
 sort_list PROC
 	push	ebp
-	mov		ebp, esp
-	mov		ecx, [ebp+8]			; use request as counter
-	dec		ecx
-	L1:								; outer loop
+	mov	ebp, esp
+	mov	ecx, [ebp+8]			; use request as counter
+	dec	ecx
+	L1:					; outer loop
 		push	ecx
-		mov		esi, [ebp+12]		; move array address to esi
+		mov	esi, [ebp+12]		; move array address to esi
 	L2:
-		mov		eax, [esi]			; move arry contents to eax
-		cmp		[esi+4], eax		; compare eax to next array value
-		jl		L3					
+		mov	eax, [esi]		; move arry contents to eax
+		cmp	[esi+4], eax		; compare eax to next array value
+		jl	L3					
 		xchg	eax, [esi+4]		; exchange eax & next array value
-		mov		[esi], eax			; move eax value to current array index
+		mov	[esi], eax		; move eax value to current array index
 	L3: 
-		add		esi, 4				; increase array index
+		add	esi, 4			; increase array index
 		loop	L2
 
-		pop		ecx
+		pop	ecx
 		loop	L1
 
-		pop		ebp
+		pop	ebp
 		ret 8
 sort_list ENDP
 
@@ -230,37 +228,37 @@ sort_list ENDP
 ;******************************************************************
 display_median PROC
 	push	ebp
-	mov		ebp, esp
-	mov		esi, [ebp+16]	; move array addrss to esi
-	mov		eax, [ebp+8]	; move request to eax
+	mov	ebp, esp
+	mov	esi, [ebp+16]	; move array addrss to esi
+	mov	eax, [ebp+8]	; move request to eax
 	cdq
-	mov		ebx, 2
-	div		ebx				; divide request by 2
-	cmp		edx, 0
-	je		if_even
-	mov		ebx, 4
-	mul		ebx				; calc dist for needed array address
-	add		esi, eax		; add eax to current address
-	mov		eax, [esi]		; move eax to new array address
-	jmp		print
+	mov	ebx, 2
+	div	ebx		; divide request by 2
+	cmp	edx, 0
+	je	if_even
+	mov	ebx, 4
+	mul	ebx		; calc dist for needed array address
+	add	esi, eax	; add eax to current address
+	mov	eax, [esi]	; move eax to new array address
+	jmp	print
 	if_even:
-		dec		eax
-		mov		ebx, 4
-		mul		ebx
-		add		esi, eax
-		mov		eax, [esi]		; move array value to eax
-		mov		edx, [esi+4]	; move next array value to edx
-		add		eax, edx		; add values
+		dec	eax
+		mov	ebx, 4
+		mul	ebx
+		add	esi, eax
+		mov	eax, [esi]	; move array value to eax
+		mov	edx, [esi+4]	; move next array value to edx
+		add	eax, edx	; add values
 		cdq
-		mov		ebx, 2
-		div		ebx				; divide by two for average
+		mov	ebx, 2
+		div	ebx		; divide by two for average
 	print:
-		mov		edx, [ebp+12]	; move median title to edx
+		mov	edx, [ebp+12]	; move median title to edx
 		call	WriteString
 		call	WriteDec
 		call	Crlf
 		call	Crlf
-		pop		ebp
+		pop	ebp
 		ret	12
 display_median ENDP
 
@@ -276,25 +274,25 @@ display_median ENDP
 ;******************************************************************
 display_list PROC
 	push	ebp
-	mov		ebp, esp
+	mov	ebp, esp
 	call	Crlf
-	mov		edx, [ebp+16]		; move array title to edx
+	mov	edx, [ebp+16]		; move array title to edx
 	call	WriteString
 	call	Crlf
-	mov		esi, [ebp+12]		; move array address to esi
-	mov		ecx, [ebp+8]		; use request as counter
-	mov		ebx, 0
+	mov	esi, [ebp+12]		; move array address to esi
+	mov	ecx, [ebp+8]		; use request as counter
+	mov	ebx, 0
 	print_loop:
-		mov		eax, [esi]		; move array value to esi
+		mov	eax, [esi]		; move array value to esi
 		call	WriteDec
-		mov		edx, [ebp+20]	; move spacer to edx
+		mov	edx, [ebp+20]	; move spacer to edx
 		call	WriteString
-		add		esi, 4
-		inc		ebx
-		cmp		ebx, 10
-		jne		end_loop
+		add	esi, 4
+		inc	ebx
+		cmp	ebx, 10
+		jne	end_loop
 		call	Crlf
-		mov		ebx, 0
+		mov	ebx, 0
 		end_loop:
 			loop	print_loop
 	call	Crlf
